@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QProgressBar>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -18,5 +19,8 @@ class MainWindow : public QMainWindow
         ~MainWindow();
 
     private:
-        Ui::MainWindow *ui;
+        mutable Ui::MainWindow* _ui;
+        QProgressBar* _progressBar;
+
+        void _initProgressBar();
 };
