@@ -1,10 +1,10 @@
-#include "mainwindow.hpp"
-
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
 
-int main(int argc, char* argv[])
+#include "main_window.hpp"
+
+qint32 main(qint32 argc, char** argv)
 {
     QApplication a(argc, argv);
 
