@@ -1,80 +1,77 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 4.0)
 project(PackStacker LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.8 REQUIRED COMPONENTS Core Widgets LinguistTools)
+find_package(Qt6 6.10 REQUIRED COMPONENTS Core Widgets LinguistTools)
+qt_standard_project_setup()
 
 include(FetchContent)
 
 FetchContent_Declare(
-    zlib
-    GIT_REPOSITORY https://github.com/madler/zlib.git
-    GIT_TAG        v1.3.1
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG        v3.12.0
+    GIT_SHALLOW    TRUE
 )
-
-set(ZLIB_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(zlib)
-
-if(TARGET zlibstatic)
-    set(ZLIB_LIBRARY zlibstatic)
-elseif(TARGET zlib)
-    set(ZLIB_LIBRARY zlib)
-else()
-    message(FATAL_ERROR "ZLIB target not found! FetchContent failed?")
-endif()
-
-set(ZLIB_FOUND TRUE)
-set(ZLIB_INCLUDE_DIR ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
-set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
-
-if(NOT TARGET ZLIB::ZLIB)
-    add_library(ZLIB::ZLIB ALIAS ${ZLIB_LIBRARY})
-endif()
+set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
+set(JSON_Install    OFF CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
-    quazip
-    GIT_REPOSITORY https://github.com/stachenov/quazip.git
-    GIT_TAG        v1.4
-    OVERRIDE_FIND_PACKAGE
+    libzip
+    GIT_REPOSITORY https://github.com/nih-at/libzip.git
+    GIT_TAG        v1.11.4
+    GIT_SHALLOW    TRUE
 )
+set(BUILD_SHARED_LIBS  OFF CACHE BOOL "" FORCE)
+set(LIBZIP_DO_INSTALL  OFF CACHE BOOL "" FORCE)
+set(BUILD_TOOLS        OFF CACHE BOOL "" FORCE)
+set(BUILD_REGRESS      OFF CACHE BOOL "" FORCE)
+set(BUILD_EXAMPLES     OFF CACHE BOOL "" FORCE)
+set(BUILD_DOC          OFF CACHE BOOL "" FORCE)
+set(ENABLE_BZIP2       OFF CACHE BOOL "" FORCE)
+set(ENABLE_LZMA        OFF CACHE BOOL "" FORCE)
+set(ENABLE_ZSTD        OFF CACHE BOOL "" FORCE)
+set(ENABLE_OPENSSL     OFF CACHE BOOL "" FORCE)
+set(ENABLE_GNUTLS      OFF CACHE BOOL "" FORCE)
+set(ENABLE_MBEDTLS     OFF CACHE BOOL "" FORCE)
 
-set(QUAZIP_QT_MAJOR_VERSION 6 CACHE STRING "" FORCE)
-set(QUAZIP_USE_QT_ZLIB OFF CACHE BOOL "" FORCE)
-
-set(QUAZIP_BZIP2 OFF CACHE BOOL "" FORCE)
-
-set(QUAZIP_INSTALL OFF CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(quazip)
-
-qt_standard_project_setup()
+FetchContent_MakeAvailable(nlohmann_json libzip)
 
 qt_add_executable(PackStacker
-    main.cpp
-    main_window.cpp
-    main_window.hpp
-    main_window.ui
-    storage/pack_storage.hpp storage/pack_storage.cpp
+    WIN32
+    src/main.cpp
+    src/gui/main_window.cpp
+    include/gui/main_window.hpp
+    forms/main_window.ui
+    src/storage/pack_storage.cpp
+    include/storage/pack_storage.hpp
 )
 
-qt_add_translations(
-    TARGETS PackStacker
-    TS_FILES PackStacker_ru_RU.ts
+set_target_properties(PackStacker PROPERTIES
+    AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms
 )
+
+target_include_directories(PackStacker PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(PackStacker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_link_libraries(PackStacker
     PRIVATE
         Qt6::Core
         Qt6::Widgets
-        QuaZip::QuaZip
-        ${ZLIB_LIBRARY}
+        nlohmann_json::nlohmann_json
+        libzip::zip
+)
+
+target_compile_options(PackStacker PRIVATE -Wall -Wextra -Wpedantic -Werror)
+
+qt_add_translations(
+    TARGETS PackStacker
+    TS_FILES i18n/PackStacker_ru_RU.ts
 )
 
 include(GNUInstallDirs)
-
 install(TARGETS PackStacker
     BUNDLE  DESTINATION .
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
