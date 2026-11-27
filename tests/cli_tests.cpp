@@ -136,7 +136,7 @@ namespace
 }
 
 #ifdef _WIN32
-int32_t wmain(int32_t argc, wchar_t* argv[])
+extern "C" int32_t wmain(int32_t argc, wchar_t* argv[])
 #else
 int32_t main(int32_t argc, char* argv[])
 #endif

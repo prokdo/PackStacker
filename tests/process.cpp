@@ -3,16 +3,13 @@
 #include "core/filesystem.hpp"
 #include "testing/fixtures.hpp"
 
-#include <chrono>
 #include <cstdint>
 #include <exception>
 #include <filesystem>
 #include <iterator>
-#include <ranges>
 #include <stdexcept>
 #include <string>
 #include <string_view>
-#include <thread>
 #include <vector>
 
 #ifdef _WIN32
@@ -26,12 +23,25 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h>
+
+#include <fileapi.h>
+#include <handleapi.h>
+#include <minwinbase.h>
+#include <minwindef.h>
+#include <processenv.h>
+#include <processthreadsapi.h>
+#include <synchapi.h>
+#include <winnls.h>
+#include <winnt.h>
 #else
 #include <cerrno>
+#include <chrono>
 #include <csignal>
 #include <fcntl.h>
+#include <ranges>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <thread>
 #include <unistd.h>
 
 #endif
@@ -53,9 +63,18 @@ namespace PackStacker::Testing
         };
         using Handle = std::unique_ptr<void, CloseHandle>;
 
+        SECURITY_ATTRIBUTES inheritableSecurity()
+        {
+            return {
+                .nLength = sizeof(SECURITY_ATTRIBUTES),
+                .lpSecurityDescriptor = nullptr,
+                .bInheritHandle = TRUE,
+            };
+        }
+
         Handle outputHandle(const std::filesystem::path& path)
         {
-            auto security = SECURITY_ATTRIBUTES{sizeof(SECURITY_ATTRIBUTES), nullptr, TRUE};
+            auto security = inheritableSecurity();
             auto* handle = CreateFileW(path.c_str(), GENERIC_WRITE, FILE_SHARE_READ, &security,
                                        CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
             if (handle == INVALID_HANDLE_VALUE)
@@ -65,7 +84,7 @@ namespace PackStacker::Testing
             return Handle(handle);
         }
 
-        std::wstring quoted(std::wstring_view argument)
+        std::wstring quoteArgument(std::wstring_view argument)
         {
             auto result = std::wstring{L"\""};
             auto slashes = std::size_t{0};
@@ -76,7 +95,7 @@ namespace PackStacker::Testing
                     ++slashes;
                     continue;
                 }
-                result.append(character == L'"' ? slashes * 2 + 1 : slashes, L'\\');
+                result.append(character == L'"' ? (slashes * 2) + 1 : slashes, L'\\');
                 slashes = 0;
                 result.push_back(character);
             }
@@ -155,26 +174,26 @@ namespace PackStacker::Testing
                         const std::filesystem::path& error)
         {
             const auto application = std::filesystem::absolute(PathFromUtf8(executable)).wstring();
-            auto command = quoted(application);
+            auto command = quoteArgument(application);
             for (const auto& argument : arguments)
             {
-                command += L' ' + quoted(PathFromUtf8(argument).native());
+                command += L' ' + quoteArgument(PathFromUtf8(argument).native());
             }
-            auto standardOutput = outputHandle(output);
-            auto standardError = outputHandle(error);
+            const auto standardOutput = outputHandle(output);
+            const auto standardError = outputHandle(error);
             auto startup = STARTUPINFOW{};
             startup.cb = sizeof(startup);
             startup.dwFlags = STARTF_USESTDHANDLES;
             startup.hStdOutput = standardOutput.get();
             startup.hStdError = standardError.get();
-            auto security = SECURITY_ATTRIBUTES{sizeof(SECURITY_ATTRIBUTES), nullptr, TRUE};
+            auto security = inheritableSecurity();
             auto* input = CreateFileW(L"NUL", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
                                       &security, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
             if (input == INVALID_HANDLE_VALUE)
             {
                 throw std::runtime_error("Cannot open process input");
             }
-            auto standardInput = Handle(input);
+            const auto standardInput = Handle(input);
             startup.hStdInput = standardInput.get();
             auto information = PROCESS_INFORMATION{};
             auto environment = childEnvironment();
@@ -184,7 +203,7 @@ namespace PackStacker::Testing
             {
                 throw std::runtime_error("CLI did not start");
             }
-            auto process = Handle(information.hProcess);
+            const auto process = Handle(information.hProcess);
             const auto thread = Handle(information.hThread);
             const auto waited = WaitForSingleObject(process.get(), 20000);
             if (waited != WAIT_OBJECT_0)

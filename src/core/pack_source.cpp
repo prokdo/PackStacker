@@ -37,7 +37,11 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-#include <windows.h>
+#include <errhandlingapi.h>
+#include <fileapi.h>
+#include <handleapi.h>
+#include <minwinbase.h>
+#include <winnt.h>
 #endif
 
 namespace PackStacker
@@ -110,7 +114,7 @@ namespace PackStacker
                 return false;
             }
             auto data = WIN32_FIND_DATAW{};
-            const auto handle = FindFirstFileW(path.c_str(), &data);
+            auto* const handle = FindFirstFileW(path.c_str(), &data);
             if (handle == INVALID_HANDLE_VALUE)
             {
                 return std::unexpected(

@@ -42,7 +42,7 @@ IncludeCategories:
     Priority: 2
   - Regex: '^<(CLI/.*|nlohmann/.*|utf8proc\.h|zip\.h)>'
     Priority: 3
-  - Regex: '^<sddl\.h>$'
+  - Regex: '^<(errhandlingapi|fileapi|handleapi|minwinbase|minwindef|processenv|processthreadsapi|sddl|stringapiset|synchapi|winerror|winnls|winnt)\.h>$'
     Priority: 5
   - Regex: '^<'
     Priority: 4

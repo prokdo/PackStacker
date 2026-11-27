@@ -25,7 +25,13 @@
 #include <memory>
 #include <windows.h>
 
+#include <errhandlingapi.h>
+#include <fileapi.h>
+#include <minwinbase.h>
+#include <minwindef.h>
 #include <sddl.h>
+#include <winerror.h>
+#include <winnt.h>
 #else
 #include <sys/stat.h>
 #endif
@@ -67,8 +73,9 @@ namespace PackStacker
         {
 #ifdef _WIN32
             auto* descriptor = PSECURITY_DESCRIPTOR{nullptr};
-            if (!ConvertStringSecurityDescriptorToSecurityDescriptorW(
-                    L"D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;OW)", SDDL_REVISION_1, &descriptor, nullptr))
+            if (ConvertStringSecurityDescriptorToSecurityDescriptorW(
+                    L"D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;OW)", SDDL_REVISION_1, &descriptor,
+                    nullptr) == 0)
             {
                 return {static_cast<int32_t>(GetLastError()), std::system_category()};
             }
@@ -80,7 +87,7 @@ namespace PackStacker
                 .bInheritHandle = FALSE,
             };
             const auto native = extendedPath(path);
-            if (CreateDirectoryW(native.c_str(), &attributes))
+            if (CreateDirectoryW(native.c_str(), &attributes) != 0)
             {
                 return {};
             }
@@ -106,7 +113,7 @@ namespace PackStacker
 #ifdef _WIN32
         const auto nativeSource = extendedPath(source);
         const auto nativeDestination = extendedPath(destination);
-        if (MoveFileExW(nativeSource.c_str(), nativeDestination.c_str(), 0))
+        if (MoveFileExW(nativeSource.c_str(), nativeDestination.c_str(), 0) != 0)
         {
             return {};
         }

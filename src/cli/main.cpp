@@ -21,7 +21,8 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-#include <windows.h>
+#include <stringapiset.h>
+#include <winnls.h>
 #endif
 
 namespace
@@ -160,8 +161,9 @@ namespace
     }
 
 #ifdef _WIN32
-    std::expected<std::string, std::string> utf8Argument(std::wstring_view value)
+    std::expected<std::string, std::string> utf8Argument(const wchar_t* argument)
     {
+        const auto value = std::wstring_view(argument);
         if (value.empty())
         {
             return std::string{};
@@ -171,14 +173,14 @@ namespace
             return std::unexpected("Command-line argument is too long");
         }
         const auto size = static_cast<int32_t>(value.size());
-        const auto required = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, value.data(), size,
+        const auto required = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, argument, size,
                                                   nullptr, 0, nullptr, nullptr);
         if (required == 0)
         {
             return std::unexpected("Invalid Unicode command-line argument");
         }
         auto result = std::string(static_cast<std::size_t>(required), '\0');
-        if (WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, value.data(), size, result.data(),
+        if (WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, argument, size, result.data(),
                                 required, nullptr, nullptr) != required)
         {
             return std::unexpected("Cannot convert command-line argument to UTF-8");
@@ -189,7 +191,7 @@ namespace
 }
 
 #ifdef _WIN32
-int32_t wmain(int32_t argc, wchar_t* argv[])
+extern "C" int32_t wmain(int32_t argc, wchar_t* argv[])
 {
     auto arguments = std::vector<std::string>{};
     for (const auto* argument : std::span(argv, static_cast<std::size_t>(std::max(argc, 0))))

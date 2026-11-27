@@ -41,6 +41,7 @@ CheckOptions:
   readability-identifier-naming.VariableCase: camelBack
   readability-identifier-naming.FunctionCase: camelBack
   readability-identifier-naming.GlobalFunctionCase: CamelCase
+  readability-identifier-naming.GlobalFunctionIgnoredRegexp: '^wmain$'
   readability-identifier-naming.ConstexprVariableCase: camelBack
   readability-identifier-naming.GlobalConstantCase: CamelCase
   readability-identifier-naming.GlobalConstexprVariableCase: CamelCase
@@ -49,4 +50,4 @@ CheckOptions:
   readability-braces-around-statements.ShortStatementLines: '0'
   readability-trailing-comma.SingleLineCommaPolicy: Ignore
   misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: 'true'
-  misc-include-cleaner.IgnoreHeaders: '(^|/)stdio\.h$;(^|/)stdlib\.h$;(^|/)csignal$;(^|/)signal\.h$'
+  misc-include-cleaner.IgnoreHeaders: '(^|/)stdio\.h$;(^|/)stdlib\.h$;(^|/)csignal$;(^|/)signal\.h$;(^|[/\\])wchar\.h$'
