@@ -1,33 +1,47 @@
 Language: Cpp
 BasedOnStyle: Google
+FixNamespaceComments: false
 
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
 
 BreakBeforeBraces: Allman
+NamespaceIndentation: All
 
 ColumnLimit: 100
 
 IndentCaseLabels: true
-IndentAccessModifiers: true
-AccessModifierOffset: 0
+IndentAccessModifiers: false
+AccessModifierOffset: -4
 
 
 AlignAfterOpenBracket: Align
-AlignConsecutiveAssignments: false
-AlignConsecutiveDeclarations: false
-AlignOperands: true
+AlignConsecutiveAssignments: None
+AlignConsecutiveDeclarations: None
+AlignOperands: Align
 AlignTrailingComments: true
 
-AllowShortBlocksOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Inline
+AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: false
 
 BinPackArguments: true
-BinPackParameters: true
+BinPackParameters: BinPack
 
-SortIncludes: true
-IncludeBlocks: Preserve
+SortIncludes:
+  Enabled: true
+  IgnoreCase: false
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^"'
+    Priority: 1
+  - Regex: '^<(Q[^/>]*|q[^/>]*\.h)>'
+    Priority: 2
+  - Regex: '^<(CLI/.*|nlohmann/.*|utf8proc\.h|zip\.h)>'
+    Priority: 3
+  - Regex: '^<'
+    Priority: 4
+QualifierAlignment: Left
