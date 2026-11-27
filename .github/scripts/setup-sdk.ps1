@@ -35,7 +35,7 @@ function Install-QtComponent {
 
 $sdk = Join-Path $env:RUNNER_TEMP Qt
 New-Item -ItemType Directory -Path $sdk | Out-Null
-$curl = (Get-Command curl -CommandType Application -ErrorAction Stop).Source
+$curl = (Get-Command curl -CommandType Application -TotalCount 1 -ErrorAction Stop).Source
 $repo = 'https://download.qt.io/online/qtsdkrepository'
 if ($IsWindows) {
   $platform = 'windows_x86'
