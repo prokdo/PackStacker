@@ -11,177 +11,42 @@ Checks: >
   readability-*,
   -bugprone-easily-swappable-parameters,
   -google-readability-todo,
-  -google-runtime-references,
   -cppcoreguidelines-pro-type-union-access,
   -cppcoreguidelines-avoid-magic-numbers,
   -readability-magic-numbers,
   -modernize-use-trailing-return-type,
   -modernize-avoid-c-arrays,
   -cppcoreguidelines-avoid-c-arrays,
-  -hicpp-avoid-c-arrays,
   -modernize-use-nodiscard,
   -bugprone-suspicious-include,
-  # Исключения - ЗАПРЕЩЕНЫ для геймдева
-  -cppcoreguidelines-exceptions-*,
-  -hicpp-exception-baseclass,
-  -bugprone-exception-escape
+  -bugprone-exception-escape,
+  -google-readability-namespace-comments,
+  -portability-avoid-pragma-once
 WarningsAsErrors: '*'
 FormatStyle: file
-
+HeaderFilterRegex: '.*/(include|src|tests)/.*'
 CheckOptions:
-  - key: hicpp-no-exceptions
-    value: '1'
-  - key: cppcoreguidelines-no-exceptions
-    value: '1'
-
-  - key: readability-identifier-naming.ClassCase
-    value: CamelCase
-  - key: readability-identifier-naming.StructCase
-    value: CamelCase
-  - key: readability-identifier-naming.EnumCase
-    value: CamelCase
-  - key: readability-identifier-naming.EnumConstantCase
-    value: UPPER_CASE
-  - key: readability-identifier-naming.ConstantCase
-    value: UPPER_CASE
-  - key: readability-identifier-naming.ConstantMemberCase
-    value: UPPER_CASE
-  - key: readability-identifier-naming.MemberCase
-    value: camelCase
-  - key: readability-identifier-naming.PrivateMemberSuffix
-    value: '_'
-  - key: readability-identifier-naming.ProtectedMemberSuffix
-    value: '_'
-  - key: readability-identifier-naming.VariableCase
-    value: camelCase
-  - key: readability-identifier-naming.FunctionCase
-    value: camelCase
-  - key: readability-identifier-naming.ConstexprVariableCase
-    value: UPPER_CASE
-  - key: readability-identifier-naming.ConstexprFunctionCase
-    value: camelCase
-  - key: readability-identifier-naming.NamespaceCase
-    value: CamelCase
-
-  - key: misc-unused-parameters
-    value: '1'
-  - key: misc-unused-using-decls
-    value: '1'
-  - key: misc-unused-alias-decls
-    value: '1'
-
-  - key: concurrency-mt-unsafe
-    value: '1'
-
-  - key: bugprone-use-after-move
-    value: '1'
-  - key: bugprone-not-null-terminated-result
-    value: '1'
-
-  - key: modernize-use-default-member-init
-    value: '1'
-  - key: modernize-use-nullptr
-    value: '1'
-  - key: modernize-use-override
-    value: '1'
-  - key: modernize-use-equals-default
-    value: '1'
-  - key: modernize-use-equals-delete
-    value: '1'
-  - key: modernize-use-noexcept
-    value: '1'
-  - key: modernize-pass-by-value
-    value: '1'
-  - key: modernize-concat-nested-namespaces
-    value: '1'
-  - key: modernize-use-trailing-return-type
-    value: '0'
-  - key: modernize-use-auto
-    value: '1'
-  - key: modernize-raw-string-literal
-    value: '0'
-
-  - key: performance-no-automatic-move
-    value: '1'
-  - key: performance-for-range-copy
-    value: '1'
-  - key: performance-implicit-conversion-in-loop
-    value: '1'
-  - key: performance-inefficient-algorithm
-    value: '1'
-  - key: performance-inefficient-vector-operation
-    value: '1'
-  - key: performance-move-const-arg
-    value: '1'
-  - key: performance-move-constructor-init
-    value: '1'
-  - key: performance-noexcept-move-constructor
-    value: '1'
-  - key: performance-trivially-destructible
-    value: '1'
-  - key: performance-type-promotion-in-math-fn
-    value: '1'
-  - key: performance-unnecessary-copy-initialization
-    value: '1'
-  - key: performance-unnecessary-value-param
-    value: '1'
-
-  - key: readability-avoid-const-params-in-decls
-    value: '0'
-  - key: readability-braces-around-statements
-    value: '1'
-  - key: readability-const-return-type
-    value: '1'
-  - key: readability-container-size-empty
-    value: '1'
-  - key: readability-convert-member-functions-to-static
-    value: '1'
-  - key: readability-delete-null-pointer
-    value: '1'
-  - key: readability-else-after-return
-    value: '1'
-  - key: readability-function-size
-    value: '1'
-  - key: readability-identifier-length
-    value: '3'
-  - key: readability-implicit-bool-conversion
-    value: '1'
-  - key: readability-inconsistent-declaration-parameter-name
-    value: '1'
-  - key: readability-isolate-declaration
-    value: '0'
-  - key: readability-make-member-function-const
-    value: '1'
-  - key: readability-non-const-parameter
-    value: '0'
-  - key: readability-qualified-auto
-    value: '1'
-  - key: readability-redundant-access-specifiers
-    value: '1'
-  - key: readability-redundant-control-flow
-    value: '1'
-  - key: readability-redundant-declaration
-    value: '1'
-  - key: readability-redundant-function-ptr-dereference
-    value: '1'
-  - key: readability-redundant-smartptr-get
-    value: '1'
-  - key: readability-redundant-string-cstr
-    value: '1'
-  - key: readability-redundant-string-init
-    value: '1'
-  - key: readability-simplify-boolean-expr
-    value: '1'
-  - key: readability-static-accessed-through-instance
-    value: '1'
-  - key: readability-static-definition-in-anonymous-namespace
-    value: '1'
-  - key: readability-string-compare
-    value: '1'
-  - key: readability-uniqueptr-delete-release
-    value: '1'
-  - key: readability-use-anyofallof
-    value: '1'
-
-HeaderFilterRegex: '.*'
-AnalyzeTemporaryDtors: true
+  readability-identifier-naming.ClassCase: CamelCase
+  readability-identifier-naming.StructCase: CamelCase
+  readability-identifier-naming.EnumCase: CamelCase
+  readability-identifier-naming.EnumConstantCase: UPPER_CASE
+  readability-identifier-naming.ConstantCase: camelBack
+  readability-identifier-naming.MemberCase: CamelCase
+  readability-identifier-naming.PublicMemberCase: CamelCase
+  readability-identifier-naming.PublicMethodCase: CamelCase
+  readability-identifier-naming.PrivateMemberCase: camelBack
+  readability-identifier-naming.PrivateMethodCase: camelBack
+  readability-identifier-naming.ProtectedMemberCase: camelBack
+  readability-identifier-naming.ProtectedMethodCase: camelBack
+  readability-identifier-naming.VariableCase: camelBack
+  readability-identifier-naming.FunctionCase: camelBack
+  readability-identifier-naming.GlobalFunctionCase: CamelCase
+  readability-identifier-naming.ConstexprVariableCase: camelBack
+  readability-identifier-naming.GlobalConstantCase: CamelCase
+  readability-identifier-naming.GlobalConstexprVariableCase: CamelCase
+  readability-identifier-naming.NamespaceCase: CamelCase
+  modernize-use-auto.MinTypeNameLength: '0'
+  readability-braces-around-statements.ShortStatementLines: '0'
+  readability-trailing-comma.SingleLineCommaPolicy: Ignore
+  misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: 'true'
+  misc-include-cleaner.IgnoreHeaders: '(^|/)stdio\.h$;(^|/)stdlib\.h$;(^|/)csignal$;(^|/)signal\.h$'

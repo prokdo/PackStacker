@@ -1,0 +1,40 @@
+{
+  "name": "packstacker",
+  "version": "1.0.0",
+  "description": "Minecraft Java resource pack and data pack merger",
+  "dependencies": [
+    { "name": "cli11", "version>=": "2.7.2" },
+    { "name": "libzip", "version>=": "1.11.4", "default-features": false },
+    { "name": "nlohmann-json", "version>=": "3.12.0" },
+    { "name": "utf8proc", "version>=": "2.12.0" },
+    { "name": "zlib", "version>=": "1.4" }
+  ],
+  "features": {
+    "gui": {
+      "description": "Optional Qt Quick GUI dependencies, GUI tests, Linguist and translations",
+      "dependencies": [
+        {
+          "name": "qtbase",
+          "version>=": "6.10.0",
+          "default-features": false,
+          "features": [ "freetype", "gui", "harfbuzz", "opengl", "png", "testlib", "thread" ]
+        },
+        {
+          "name": "qtbase",
+          "default-features": false,
+          "features": [ "fontconfig", "xcb" ],
+          "platform": "linux"
+        },
+        {
+          "name": "qtbase",
+          "default-features": false,
+          "features": [ "windeployqt" ],
+          "platform": "windows"
+        },
+        { "name": "qtdeclarative", "version>=": "6.10.0", "default-features": false },
+        { "name": "qttools", "version>=": "6.10.0", "default-features": false, "features": [ "linguist" ] },
+        { "name": "qttranslations", "version>=": "6.10.0", "default-features": false }
+      ]
+    }
+  }
+}

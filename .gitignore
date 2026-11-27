@@ -1,82 +1,109 @@
-# This file is used to ignore files which are generated
-# ----------------------------------------------------------------------------
+# Build directories and local dependencies
+/build*/
+/cmake-build-*/
+/out/
+/vcpkg_installed/
+/vcpkg/downloads/
+/vcpkg/buildtrees/
+/vcpkg/packages/
 
-*~
-*.autosave
-*.a
-*.core
-*.moc
+# In-source CMake, Ninja and CTest output
+/CMakeCache.txt
+/CMakeFiles/
+/CMakeUserPresets.json
+/compile_commands.json
+/cmake_install.cmake
+/install_manifest*.txt
+/CTestTestfile.cmake
+/DartConfiguration.tcl
+/Testing/
+/.cmake/
+/.ninja_deps
+/.ninja_log
+/build.ninja
+/rules.ninja
+/Makefile
+
+# Compiled artifacts
 *.o
 *.obj
-*.orig
-*.rej
+*.a
+*.lib
 *.so
 *.so.*
+*.dylib
+*.dll
+*.exe
+*.app/
+*.debug
+*.pdb
+*.ilk
+*.idb
+*.dSYM/
+*.pch
+*.gch
+*.class
+
+# Generated Qt files
+*.moc
+*.qm
+*.prl
 *_pch.h.cpp
 *_resource.rc
-*.qm
-.#*
-*.*#
-core
-!core/
-tags
-.DS_Store
-.directory
-*.debug
-Makefile*
-*.prl
-*.app
 moc_*.cpp
 ui_*.h
 qrc_*.cpp
-Thumbs.db
-*.res
-*.rc
-/.qmake.cache
-/.qmake.stash
-
-# qtcreator generated files
-*.pro.user*
-*.qbs.user*
-CMakeLists.txt.user*
-
-# xemacs temporary files
-*.flc
-
-# Vim temporary files
-.*.swp
-
-# Visual Studio generated files
-*.ib_pdb_index
-*.idb
-*.ilk
-*.pdb
-*.sln
-*.suo
-*.vcproj
-*vcproj.*.*.user
-*.ncb
-*.sdf
-*.opensdf
-*.vcxproj
-*vcxproj.*
-
-# MinGW generated files
-*.Debug
-*.Release
-
-# Python byte code
-*.pyc
-
-# Binaries
-# --------
-*.dll
-*.exe
-
-# Directories with generated files
 .moc/
 .obj/
 .pch/
 .rcc/
 .uic/
-/build*/
+/.qt/
+/.qmake.cache
+/.qmake.stash
+
+# Local editor settings and caches
+AGENTS.md
+/.cache/
+/.qtcreator/
+/.ruff_cache/
+/.graymatter/
+/.vs/
+/.idea/
+/.zed/
+/.qmlls.ini
+opencode.jsonc
+.clangd
+*.pro.user*
+*.qbs.user*
+CMakeLists.txt.user*
+*.suo
+*.user
+*.swp
+*.swo
+*~
+*.autosave
+.#*
+*.*#
+*.orig
+*.rej
+
+# Test, coverage and scripting artifacts
+__pycache__/
+*.pyc
+/.pytest_cache/
+/coverage/
+*.gcda
+*.gcno
+*.profraw
+*.profdata
+
+# Operating system files and crash dumps
+.DS_Store
+.directory
+Thumbs.db
+Desktop.ini
+*.stackdump
+*.core
+/core
+/core.[0-9]*

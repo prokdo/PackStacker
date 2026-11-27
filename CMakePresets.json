@@ -1,0 +1,58 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": { "major": 4, "minor": 0, "patch": 0 },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "BUILD_TESTING": true,
+                "PACKSTACKER_BUILD_GUI": true
+            }
+        },
+        {
+            "name": "debug",
+            "displayName": "Debug (GUI + CLI)",
+            "inherits": "base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Release (GUI + CLI)",
+            "inherits": "base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "headless-debug",
+            "displayName": "Debug (headless)",
+            "inherits": "debug",
+            "cacheVariables": { "PACKSTACKER_BUILD_GUI": false }
+        },
+        {
+            "name": "headless-release",
+            "displayName": "Release (headless)",
+            "inherits": "release",
+            "cacheVariables": { "PACKSTACKER_BUILD_GUI": false }
+        }
+    ],
+    "buildPresets": [
+        { "name": "debug", "configurePreset": "debug" },
+        { "name": "release", "configurePreset": "release" },
+        { "name": "headless-debug", "configurePreset": "headless-debug" },
+        { "name": "headless-release", "configurePreset": "headless-release" }
+    ],
+    "testPresets": [
+        { "name": "base", "hidden": true, "output": { "outputOnFailure": true } },
+        { "name": "debug", "configurePreset": "debug", "inherits": "base" },
+        { "name": "release", "configurePreset": "release", "inherits": "base" },
+        { "name": "headless-debug", "configurePreset": "headless-debug", "inherits": "base" },
+        { "name": "headless-release", "configurePreset": "headless-release", "inherits": "base" }
+    ]
+}

@@ -1,0 +1,88 @@
+name: Build & Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+jobs:
+  format:
+    name: C++ formatting
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - name: Determine build version
+        id: version
+        shell: bash
+        run: |
+          version=dev
+          if [[ "$GITHUB_REF_TYPE" == tag ]]; then
+            if [[ ! "$GITHUB_REF_NAME" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+              echo "Release tag must be in vX.Y.Z format." >&2
+              exit 1
+            fi
+            version=${GITHUB_REF_NAME#v}
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - run: bash .github/scripts/setup-linux.sh format
+      - run: git ls-files -z -- '*.hpp' '*.cpp' | xargs -0 -r clang-format-23 --dry-run --Werror
+        shell: bash
+
+  verify:
+    name: ${{ matrix.platform.name }} · ${{ matrix.profile }}
+    needs: format
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - name: Linux x64
+            id: linux
+            runner: ubuntu-24.04
+            triplet: x64-linux
+          - name: Windows x64 (MinGW)
+            id: windows
+            runner: windows-2025
+            triplet: x64-mingw-static
+        profile: [gui, headless]
+    uses: ./.github/workflows/verify.yml
+    with:
+      runner: ${{ matrix.platform.runner }}
+      triplet: ${{ matrix.platform.triplet }}
+      profile: ${{ matrix.profile }}
+      artifact: packstacker-${{ matrix.platform.id }}-x64-${{ matrix.profile }}
+      version: ${{ needs.format.outputs.version }}
+
+  release:
+    name: Publish GitHub Release
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    needs: verify
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
+        with:
+          pattern: packstacker-*
+          path: release-assets
+          merge-multiple: true
+      - name: Publish verified archives
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: bash .github/scripts/publish-release.sh
