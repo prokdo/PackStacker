@@ -9,6 +9,7 @@
 #include <exception>
 #include <expected>
 #include <filesystem>
+#include <fstream>
 #include <functional>
 #include <iostream>
 #include <iterator>

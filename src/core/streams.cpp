@@ -3,15 +3,20 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <cstdio>
 #include <expected>
 #include <filesystem>
-#include <fstream>
-#include <ios>
-#include <limits>
 #include <span>
 #include <stop_token>
 #include <string>
 #include <utility>
+
+#ifdef _WIN32
+#include <fcntl.h>
+#include <io.h>
+#include <share.h>
+#include <sys/stat.h>
+#endif
 
 namespace PackStacker
 {
@@ -40,23 +45,41 @@ namespace PackStacker
         return std::move(bytes);
     }
 
-    FileWriter::FileWriter(std::ofstream stream) : stream(std::move(stream))
+    FileWriter::FileWriter(FileStream file) : stream(std::move(file))
     {
     }
 
     std::expected<FileWriter, std::string> FileWriter::Open(const std::filesystem::path& path)
     {
-        auto file = std::ofstream(path, std::ios::out | std::ios::binary | std::ios::noreplace);
-        if (!file.is_open() || !file.good())
+#ifdef _WIN32
+        auto descriptor = int32_t{-1};
+        if (_wsopen_s(&descriptor, path.c_str(), _O_WRONLY | _O_CREAT | _O_EXCL | _O_BINARY,
+                      _SH_DENYNO, _S_IREAD | _S_IWRITE) != 0)
         {
             return std::unexpected("Cannot create output file");
         }
+        auto file = FileStream(_fdopen(descriptor, "wb"), std::fclose);
+        if (file == nullptr)
+        {
+            if (_close(descriptor) != 0)
+            {
+                return std::unexpected("Cannot close output descriptor");
+            }
+            return std::unexpected("Cannot open output stream");
+        }
+#else
+        auto file = FileStream(std::fopen(path.c_str(), "wbx"), std::fclose);
+        if (file == nullptr)
+        {
+            return std::unexpected("Cannot create output file");
+        }
+#endif
         return FileWriter(std::move(file));
     }
 
     bool FileWriter::IsWritable() const
     {
-        return stream.is_open() && stream.good();
+        return stream != nullptr && std::ferror(stream.get()) == 0;
     }
 
     std::expected<std::size_t, std::string> FileWriter::Write(std::span<const char> bytes)
@@ -69,10 +92,8 @@ namespace PackStacker
         {
             return 0;
         }
-        const auto count = std::min(
-            bytes.size(), static_cast<std::size_t>(std::numeric_limits<std::streamsize>::max()));
-        stream.write(bytes.data(), static_cast<std::streamsize>(count));
-        if (!stream.good())
+        const auto count = std::fwrite(bytes.data(), 1, bytes.size(), stream.get());
+        if (count != bytes.size())
         {
             return std::unexpected("Cannot write output file");
         }
@@ -86,8 +107,7 @@ namespace PackStacker
         {
             return std::unexpected("Output file is not writable");
         }
-        stream.flush();
-        if (!stream.good())
+        if (std::fflush(stream.get()) != 0)
         {
             return std::unexpected("Cannot flush output file");
         }
@@ -96,12 +116,11 @@ namespace PackStacker
 
     std::expected<void, std::string> FileWriter::Close()
     {
-        if (!stream.is_open())
+        if (stream == nullptr)
         {
             return std::unexpected("Output file is not open");
         }
-        stream.close();
-        if (stream.fail())
+        if (std::fclose(stream.release()) != 0)
         {
             return std::unexpected("Cannot close output file");
         }

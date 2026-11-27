@@ -12,6 +12,10 @@
 #include <qobject.h>
 #include <qtypes.h>
 
+#ifdef QT_NEEDS_QMAIN
+#include <qwindowdefs.h>
+#endif
+
 qint32 main(qint32 argc, char* argv[])
 {
     auto application = QGuiApplication(argc, argv);

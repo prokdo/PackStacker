@@ -2,9 +2,10 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstdio>
 #include <expected>
 #include <filesystem>
-#include <fstream>
+#include <memory>
 #include <span>
 #include <stop_token>
 #include <string>
@@ -48,8 +49,10 @@ namespace PackStacker
         std::uint64_t Size() const;
 
     private:
-        explicit FileWriter(std::ofstream stream);
-        std::ofstream stream;
+        using FileStream = std::unique_ptr<std::FILE, int32_t (*)(std::FILE*)>;
+
+        explicit FileWriter(FileStream file);
+        FileStream stream;
         std::uint64_t size = 0;
     };
 
