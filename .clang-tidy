@@ -1,0 +1,53 @@
+Checks: >
+  -*,
+  bugprone-*,
+  concurrency-*,
+  cppcoreguidelines-*,
+  google-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -bugprone-easily-swappable-parameters,
+  -google-readability-todo,
+  -cppcoreguidelines-pro-type-union-access,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers,
+  -modernize-use-trailing-return-type,
+  -modernize-avoid-c-arrays,
+  -cppcoreguidelines-avoid-c-arrays,
+  -modernize-use-nodiscard,
+  -bugprone-suspicious-include,
+  -bugprone-exception-escape,
+  -google-readability-namespace-comments,
+  -portability-avoid-pragma-once
+WarningsAsErrors: '*'
+FormatStyle: file
+HeaderFilterRegex: '.*/(include|src|tests)/.*'
+CheckOptions:
+  readability-identifier-naming.ClassCase: CamelCase
+  readability-identifier-naming.StructCase: CamelCase
+  readability-identifier-naming.EnumCase: CamelCase
+  readability-identifier-naming.EnumConstantCase: UPPER_CASE
+  readability-identifier-naming.ConstantCase: camelBack
+  readability-identifier-naming.MemberCase: CamelCase
+  readability-identifier-naming.PublicMemberCase: CamelCase
+  readability-identifier-naming.PublicMethodCase: CamelCase
+  readability-identifier-naming.PrivateMemberCase: camelBack
+  readability-identifier-naming.PrivateMethodCase: camelBack
+  readability-identifier-naming.ProtectedMemberCase: camelBack
+  readability-identifier-naming.ProtectedMethodCase: camelBack
+  readability-identifier-naming.VariableCase: camelBack
+  readability-identifier-naming.FunctionCase: camelBack
+  readability-identifier-naming.GlobalFunctionCase: CamelCase
+  readability-identifier-naming.GlobalFunctionIgnoredRegexp: '^wmain$'
+  readability-identifier-naming.ConstexprVariableCase: camelBack
+  readability-identifier-naming.GlobalConstantCase: CamelCase
+  readability-identifier-naming.GlobalConstexprVariableCase: CamelCase
+  readability-identifier-naming.NamespaceCase: CamelCase
+  modernize-use-auto.MinTypeNameLength: '0'
+  readability-braces-around-statements.ShortStatementLines: '0'
+  readability-trailing-comma.SingleLineCommaPolicy: Ignore
+  misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: 'true'
+  misc-include-cleaner.IgnoreHeaders: '(^|[/\\])stdio\.h$;(^|/)stdlib\.h$;(^|/)csignal$;(^|/)signal\.h$;(^|[/\\])wchar\.h$'

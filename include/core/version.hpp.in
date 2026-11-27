@@ -1,0 +1,6 @@
+#pragma once
+
+namespace PackStacker
+{
+    inline constexpr auto BuildVersion = "@PACKSTACKER_VERSION@";
+}

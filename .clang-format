@@ -1,0 +1,49 @@
+Language: Cpp
+BasedOnStyle: Google
+FixNamespaceComments: false
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+BreakBeforeBraces: Allman
+NamespaceIndentation: All
+
+ColumnLimit: 100
+
+IndentCaseLabels: true
+IndentAccessModifiers: false
+AccessModifierOffset: -4
+
+
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: None
+AlignConsecutiveDeclarations: None
+AlignOperands: Align
+AlignTrailingComments: true
+
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+BinPackArguments: true
+BinPackParameters: BinPack
+
+SortIncludes:
+  Enabled: true
+  IgnoreCase: false
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^"'
+    Priority: 1
+  - Regex: '^<(Q[^/>]*|q[^/>]*\.h)>'
+    Priority: 2
+  - Regex: '^<(CLI/.*|nlohmann/.*|utf8proc\.h|zip\.h)>'
+    Priority: 3
+  - Regex: '^<(errhandlingapi|fileapi|handleapi|minwinbase|minwindef|processenv|processthreadsapi|sddl|stringapiset|synchapi|winerror|winnls|winnt)\.h>$'
+    Priority: 5
+  - Regex: '^<'
+    Priority: 4
+QualifierAlignment: Left

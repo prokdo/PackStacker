@@ -1,0 +1,32 @@
+pattern	subject	expected
+example	example	true
+ample	example	true
+^ample$	example	false
+^example$	example	true
+^example$	other	false
+^textures/.*\.png$	textures/a/test.png	true
+^textures/.*\.png$	textures/testXpng	false
+^textures/test.png$	textures/testXpng	true
+lang/|textures/	models/test.json	false
+lang/|textures/	assets/example/lang/en_us.json	true
+a.*b.*c	zzaxbyczz	true
+a.*b.*c	zzacbzz	false
+^a.*b$	ab	true
+^a.*b$	axbTAIL	false
+^	anything	true
+$	anything	true
+^$		true
+^$	x	false
+.*		true
+	foo	true
+a|b	bb	true
+^foo$|^bar$	foobar	false
+^foo$|^bar$	bar	true
+.*.*a.*.*	bbabb	true
+\.	a.b	true
+^\.$	.	true
+\.	ab	false
+.		false
+.|^$		true
+a.*a.*a.*b	aaaaaaaaaaaaa	false
+^textures/.*\.png\.mcmeta$	textures/test.png.mcmeta	true
