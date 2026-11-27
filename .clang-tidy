@@ -50,4 +50,4 @@ CheckOptions:
   readability-braces-around-statements.ShortStatementLines: '0'
   readability-trailing-comma.SingleLineCommaPolicy: Ignore
   misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: 'true'
-  misc-include-cleaner.IgnoreHeaders: '(^|/)stdio\.h$;(^|/)stdlib\.h$;(^|/)csignal$;(^|/)signal\.h$;(^|[/\\])wchar\.h$'
+  misc-include-cleaner.IgnoreHeaders: '(^|[/\\])stdio\.h$;(^|/)stdlib\.h$;(^|/)csignal$;(^|/)signal\.h$;(^|[/\\])wchar\.h$'
