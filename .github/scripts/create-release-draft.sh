@@ -13,4 +13,3 @@ for archive in "${archives[@]}"; do
   fi
 done
 gh release create "$RELEASE_TAG" --verify-tag --generate-notes --draft "${archives[@]}"
-gh release edit "$RELEASE_TAG" --draft=false

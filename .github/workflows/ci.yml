@@ -66,7 +66,7 @@ jobs:
       version: ${{ needs.format.outputs.version }}
 
   release:
-    name: Publish GitHub Release
+    name: Create GitHub Release Draft
     if: github.event_name == 'push' && github.ref_type == 'tag'
     needs: verify
     runs-on: ubuntu-24.04
@@ -81,8 +81,8 @@ jobs:
           pattern: packstacker-*
           path: release-assets
           merge-multiple: true
-      - name: Publish verified archives
+      - name: Attach verified archives to release draft
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
-        run: bash .github/scripts/publish-release.sh
+        run: bash .github/scripts/create-release-draft.sh
