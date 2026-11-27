@@ -42,6 +42,8 @@ IncludeCategories:
     Priority: 2
   - Regex: '^<(CLI/.*|nlohmann/.*|utf8proc\.h|zip\.h)>'
     Priority: 3
+  - Regex: '^<sddl\.h>$'
+    Priority: 5
   - Regex: '^<'
     Priority: 4
 QualifierAlignment: Left

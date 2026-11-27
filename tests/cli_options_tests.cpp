@@ -183,12 +183,13 @@ namespace
 
 int32_t main()
 {
+    using TestCase = std::pair<std::string_view, void (*)()>;
     const auto tests = std::array{
-        std::pair{"valid options", testValidOptions},
-        std::pair{"help and parse order", testHelpAndParseOrder},
-        std::pair{"required and repeated options", testRequiredAndRepeatedOptions},
-        std::pair{"format bounds", testFormatBounds},
-        std::pair{"single-line diagnostics", testSingleLine},
+        TestCase{"valid options", testValidOptions},
+        TestCase{"help and parse order", testHelpAndParseOrder},
+        TestCase{"required and repeated options", testRequiredAndRepeatedOptions},
+        TestCase{"format bounds", testFormatBounds},
+        TestCase{"single-line diagnostics", testSingleLine},
     };
     auto failures = std::size_t{0};
     for (const auto& [name, test] : tests)

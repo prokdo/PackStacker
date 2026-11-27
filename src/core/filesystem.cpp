@@ -23,8 +23,9 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <memory>
-#include <sddl.h>
 #include <windows.h>
+
+#include <sddl.h>
 #else
 #include <sys/stat.h>
 #endif
