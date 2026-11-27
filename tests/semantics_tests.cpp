@@ -40,11 +40,11 @@ namespace
 
     using Files = std::vector<std::pair<std::string, std::string>>;
 
-    void require(bool condition, const char* message)
+    void require(bool condition, std::string_view message)
     {
         if (!condition)
         {
-            throw std::runtime_error(message);
+            throw std::runtime_error(std::string(message));
         }
     }
 
@@ -718,8 +718,14 @@ namespace
             std::ios::binary);
         require(fixture.is_open(), "Cannot open regex fixtures");
         auto line = std::string{};
+        auto lineNumber = std::size_t{0};
         while (std::getline(fixture, line))
         {
+            ++lineNumber;
+            if (line.ends_with('\r'))
+            {
+                line.pop_back();
+            }
             if (line.empty() || line.starts_with("pattern\t"))
             {
                 continue;
@@ -727,12 +733,15 @@ namespace
             const auto first = line.find('\t');
             const auto second = line.find('\t', first + 1);
             require(first != std::string::npos && second != std::string::npos,
-                    "Invalid regex fixture");
+                    "Invalid regex fixture at line " + std::to_string(lineNumber));
+            const auto expected = line.substr(second + 1);
+            require(expected == "true" || expected == "false",
+                    "Invalid expected regex result at line " + std::to_string(lineNumber));
             const auto pattern = take(FilterPattern::Compile(line.substr(0, first), {}, {}));
             auto budget = std::uint64_t{1000000};
             require(take(pattern.Matches(line.substr(first + 1, second - first - 1), budget, {},
-                                         {})) == (line.substr(second + 1) == "true"),
-                    "Regex fixture mismatch");
+                                         {})) == (expected == "true"),
+                    "Regex fixture mismatch at line " + std::to_string(lineNumber));
         }
         require(fixture.eof() && !fixture.bad(), "Cannot read regex fixtures");
         auto budget = std::uint64_t{1000000};
