@@ -5,7 +5,7 @@ $PSNativeCommandUseErrorActionPreference = $true
 . "$PSScriptRoot/download.ps1"
 
 function Install-QtComponent {
-  param([string]$Repository, [string]$Component)
+  param([string]$Repository, [string]$Component, [string]$QtPrefix)
 
   [xml]$metadata = (& $curl --fail --silent --show-error --location --retry 3 `
     --max-time 60 "$Repository/Updates.xml" | Out-String)
@@ -18,6 +18,21 @@ function Install-QtComponent {
     if ($archive -notmatch '^[a-zA-Z0-9_.-]+\.7z$') {
       throw "Invalid archive name for $Component"
     }
+    $destination = $sdk
+    if ($QtPrefix) {
+      $operations = @($package[0].Operations.Operation | Where-Object {
+        $_.name -ceq 'Extract' -and $_.Argument[1] -ceq $archive
+      })
+      if ($operations.Count -ne 1) {
+        throw "Expected one extraction destination for $archive"
+      }
+      $prefix = "@TargetDir@/$QtPrefix"
+      $target = [string]$operations[0].Argument[0]
+      if ($target -cnotin @($prefix, "$prefix/bin", "$prefix/lib")) {
+        throw "Unexpected extraction destination for ${archive}: $target"
+      }
+      $destination = Join-Path $sdk $target.Substring('@TargetDir@/'.Length)
+    }
     $name = "$($package[0].Version)$archive"
     $url = "$Repository/$Component/$name"
     $digest = (& $curl --fail --silent --show-error --location --retry 3 `
@@ -28,7 +43,7 @@ function Install-QtComponent {
     Write-Host "Installing $name"
     $file = Join-Path $sdk $name
     Get-CiArchive $url $file $digest SHA1
-    & $sevenZip x -y -bb0 -bso0 "-o$sdk" $file
+    & $sevenZip x -y -bb0 -bso0 "-o$destination" $file
     Remove-Item -LiteralPath $file
   }
 }
@@ -55,10 +70,14 @@ if ($IsWindows) {
     Select-Object -First 1).Source
 }
 if ($Profile -eq 'gui') {
+  if ($env:QT_VERSION -notmatch '^\d+\.\d+\.\d+$') {
+    throw "Invalid Qt version: $env:QT_VERSION"
+  }
   $versionDigits = $env:QT_VERSION.Replace('.', '')
   $catalog = "qt6_$versionDigits"
-  Install-QtComponent "$repo/$platform/desktop/$catalog/$catalog" "qt.qt6.$versionDigits.$arch"
-  $qt = Join-Path $sdk "$env:QT_VERSION/$qtDir"
+  $qtPrefix = "$env:QT_VERSION/$qtDir"
+  Install-QtComponent "$repo/$platform/desktop/$catalog/$catalog" "qt.qt6.$versionDigits.$arch" $qtPrefix
+  $qt = Join-Path $sdk $qtPrefix
   if (-not (Test-Path "$qt/lib/cmake/Qt6/Qt6Config.cmake")) { throw "Qt SDK not found at $qt" }
   Set-Content -LiteralPath "$qt/bin/qt.conf" -Encoding ascii -Value '[Paths]', 'Prefix=..'
   "QT_ROOT_DIR=$qt" >> $env:GITHUB_ENV
