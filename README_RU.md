@@ -20,6 +20,5 @@
 
 ## Документация
 
-- [Wiki](https://github.com/prokdo/PackStacker/wiki/Home-RU): быстрый старт, GUI, CLI, правила объединения и решение проблем.
-- [Сборка из исходников, тесты и CI](docs/Development-RU.md).
-- [Лицензия](LICENSE).
+- [Wiki](https://github.com/prokdo/PackStacker/wiki/Home-RU): быстрый старт, GUI, CLI, правила объединения и решение проблем
+- [Лицензия](LICENSE)
