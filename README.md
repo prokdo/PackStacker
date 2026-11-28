@@ -20,6 +20,5 @@ Each operation uses one pack type and one pack format supported by all inputs. P
 
 ## Documentation
 
-- [Wiki](https://github.com/prokdo/PackStacker/wiki): quick start, GUI, CLI, merge rules and troubleshooting.
-- [Build from source, tests and CI](docs/Development.md).
-- [License](LICENSE).
+- [Wiki](https://github.com/prokdo/PackStacker/wiki): quick start, GUI, CLI, merge rules and troubleshooting
+- [License](LICENSE)
